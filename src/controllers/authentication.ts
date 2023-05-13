@@ -1,7 +1,7 @@
-import express from 'express';
+import express from "express";
 
-import { getUserByEmail, createUser } from '../db/users';
-import { authentication, random } from '../helpers';
+import { getUserByEmail, createUser } from "../db/users";
+import { authentication, random } from "../helpers";
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
@@ -11,32 +11,42 @@ export const login = async (req: express.Request, res: express.Response) => {
       return res.sendStatus(400);
     }
 
-    const existingUser = await getUserByEmail(email).select('+authentication.salt +authentication.password');
-  
+    const existingUser = await getUserByEmail(email).select(
+      "+authentication.salt +authentication.password"
+    );
+
     if (!existingUser) {
       return res.sendStatus(400);
     }
 
-    const expectedHash = authentication(existingUser.authentication!.salt!, password);
+    const expectedHash = authentication(
+      existingUser.authentication!.salt!,
+      password
+    );
 
     if (existingUser.authentication!.password != expectedHash) {
       return res.sendStatus(403);
     }
 
     const salt = random();
-    existingUser.authentication!.sessionToken = authentication(salt, existingUser._id.toString());
+    existingUser.authentication!.sessionToken = authentication(
+      salt,
+      existingUser._id.toString()
+    );
 
     await existingUser.save();
 
-    res.cookie('TSC-BACKEND-AUTH', existingUser.authentication!.sessionToken, { domain: 'localhost', path: '/' });
-
+    res.cookie("TSC-BACKEND-AUTH", existingUser.authentication!.sessionToken, {
+      domain: "localhost",
+      path: "/",
+    });
 
     return res.status(200).json(existingUser).end();
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
   }
-}
+};
 
 export const register = async (req: express.Request, res: express.Response) => {
   try {
@@ -47,7 +57,7 @@ export const register = async (req: express.Request, res: express.Response) => {
     }
 
     const existingUser = await getUserByEmail(email);
-  
+
     if (existingUser) {
       return res.sendStatus(400);
     }
@@ -67,4 +77,4 @@ export const register = async (req: express.Request, res: express.Response) => {
     console.log(error);
     return res.sendStatus(400);
   }
-}
+};
