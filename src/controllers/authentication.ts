@@ -28,7 +28,7 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     await existingUser.save();
 
-    res.cookie('MUFADDAL-AUTH', existingUser.authentication!.sessionToken, { domain: 'localhost', path: '/' });
+    res.cookie('TSC-BACKEND-AUTH', existingUser.authentication!.sessionToken, { domain: 'localhost', path: '/' });
 
 
     return res.status(200).json(existingUser).end();
