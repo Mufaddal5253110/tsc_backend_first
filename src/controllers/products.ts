@@ -1,5 +1,6 @@
 import express from "express";
 import * as product from "../db/products";
+import { get } from "lodash";
 
 export const getAllProducts = async (
   req: express.Request,
@@ -20,7 +21,15 @@ export const addProduct = async (
   res: express.Response
 ) => {
   try {
-    const { name, description, images, quantity, price, category, user } = req.body;
+    const { name, description, images, quantity, price, category } = req.body;
+
+    const currentUserId = (
+      get(req, "identity._id") as unknown as string
+    ).toString();
+
+    if (!currentUserId) {
+      return res.sendStatus(400);
+    }
 
     let prod = new product.ProductModel({
       name,
@@ -29,7 +38,7 @@ export const addProduct = async (
       quantity,
       price,
       category,
-      user,
+      user: currentUserId,
     });
 
     prod = await prod.save();
