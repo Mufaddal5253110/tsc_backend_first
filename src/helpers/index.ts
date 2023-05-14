@@ -1,11 +1,11 @@
 import crypto from "crypto";
+import envConfig from "../env.config";
 
-const SECRET = "TSBackend-REST-API";
 
 export const authentication = (salt: string, password: string): string => {
   return crypto
     .createHmac("sha256", [salt, password].join("/"))
-    .update(SECRET)
+    .update(envConfig.SECRET_KEY)
     .digest("hex");
 };
 

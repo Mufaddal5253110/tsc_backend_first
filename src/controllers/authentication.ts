@@ -2,6 +2,7 @@ import express from "express";
 
 import { getUserByEmail, createUser } from "../db/users";
 import { authentication, random } from "../helpers";
+import envConfig from "../env.config";
 
 export const login = async (req: express.Request, res: express.Response) => {
   try {
@@ -36,8 +37,8 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     await existingUser.save();
 
-    res.cookie("TSC-BACKEND-AUTH", existingUser.authentication!.sessionToken, {
-      domain: "localhost",
+    res.cookie(envConfig.COOKIE_NAME, existingUser.authentication!.sessionToken, {
+      domain: envConfig.DOMAIN_NAME,
       path: "/",
     });
 

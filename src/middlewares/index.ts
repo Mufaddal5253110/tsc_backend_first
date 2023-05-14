@@ -1,7 +1,7 @@
 import express from "express";
 import { merge, get } from "lodash";
-
 import { getUserBySessionToken } from "../db/users";
+import envConfig from "../env.config";
 
 export const isAuthenticated = async (
   req: express.Request,
@@ -9,7 +9,7 @@ export const isAuthenticated = async (
   next: express.NextFunction
 ) => {
   try {
-    const sessionToken = req.cookies["TSC-BACKEND-AUTH"];
+    const sessionToken = req.cookies[envConfig.COOKIE_NAME];
 
     if (!sessionToken) {
       return res.sendStatus(403);
